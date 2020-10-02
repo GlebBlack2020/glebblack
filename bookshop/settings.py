@@ -25,7 +25,7 @@ SECRET_KEY = '!m=ha2op&%x7*#emqa*-uhhz_y*iyoojtpoch+@8c^l1cy#gt9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["glebblack1.herokuapp.com"]
+ALLOWED_HOSTS = ["glebblack1.herokuapp.com", '127.0.0.1']
 
 
 # Application definition
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'managebook',
 ]
 
 MIDDLEWARE = [
@@ -76,12 +77,8 @@ WSGI_APPLICATION = 'bookshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get("NAME"),
-        'USER': os.environ.get("USER"),
-        'PASSWORD': os.environ.get("PASSWORD"),
-        'HOST': os.environ.get("HOST"),
-        'PORT': 5432
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
     }
 }
 
