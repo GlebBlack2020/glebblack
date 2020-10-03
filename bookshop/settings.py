@@ -77,12 +77,12 @@ WSGI_APPLICATION = 'bookshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': os.environ.get('NAME'),
-         'USER': os.environ.get('USER'),
-         'PASSWORD': os.environ.get('PASSWORD'),
-         'HOST': os.environ.get('HOST'),
-         'PORT': 5432
+        'ENGINE': 'django.db.backends.postgresql.psycopg2',
+        'NAME': os.environ.get('NAME'),
+        'USER': os.environ.get('USER'),
+        'HOST': os.environ.get('HOST'),
+        'PASSWORD': os.environ.get('PASSWORD'),
+        'PORT': 5432
     }
 }
 
