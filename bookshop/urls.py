@@ -18,7 +18,8 @@ from django.urls import path, include
 from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('shop/', include('managebook.urls'), name='managebook')
+    path('shop/', include('managebook.urls'), name='managebook'),
+    path('', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:

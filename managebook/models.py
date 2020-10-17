@@ -28,7 +28,7 @@ class Book(models.Model):
                              )
     slug = models.SlugField(unique=True, verbose_name='Слаг')
     text = models.TextField(verbose_name='Текст')
-    author = models.ManyToManyField(User, verbose_name='Автор', db_index=True)
+    author = models.ManyToManyField(User, verbose_name='Автор', db_index=True, related_name="book")
     published_date = models.DateField(auto_now_add=True)
     genre = models.ManyToManyField('managebook.Genre', verbose_name='Жанр')
     rate = models.ManyToManyField(User, through='managebook.BookLike', related_name='rate')
@@ -43,22 +43,22 @@ class Book(models.Model):
 class Comment(models.Model):
     text = models.TextField(verbose_name='Текст')
     date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь', related_name="comment")
     book = models.ForeignKey(
-        Book, on_delete=models.CASCADE, verbose_name='Книга', related_name='comment')
+        Book, on_delete=models.CASCADE, verbose_name='Книга', related_name="comment")
     like = models.ManyToManyField(
         User, through='CommentLike',  related_name='like', blank=True, null=True)
 
 
 class BookLike(models.Model):
     class Meta:
-        unique_together = ['user', 'book']
+        unique_together = ["user", "book"]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='book_like')
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="book_like")
     rate = models.PositiveIntegerField(default=0)
 
-
-    def save(self,*args, **kwargs):
+    def save(self, *args, **kwargs):
         try:
             super().save(*args, **kwargs)
         except IntegrityError:
@@ -66,17 +66,17 @@ class BookLike(models.Model):
             br.rate = self.rate
             br.save()
         else:
-             self.book.cached_rate = self.book.book_like.aggregate(Avg('rate'))['rate__avg']
-             self.book.save()
+            self.book.cached_rate = self.book.book_like.aggregate(Avg('rate'))['rate__avg']
+            self.book.save()
 
 class CommentLike(models.Model):
     class Meta:
-        unique_together = ['comment', 'user']
+        unique_together = ["comment", "user"]
 
     comment = models.ForeignKey(
-        Comment, on_delete=models.CASCADE, related_name='comment_like')
+        Comment, on_delete=models.CASCADE, related_name="comment_like")
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comment_like')
+        User, on_delete=models.CASCADE, related_name="comment_like")
 
     def save(self, *args, **kwargs):
         try:
@@ -85,7 +85,4 @@ class CommentLike(models.Model):
             CommentLike.objects.get(
                 comment_id=self.comment.id, user_id=self.user.id).delete()
             self.comment.cached_like -= 1
-        else:
-            self.comment.cached_like += 1
-        self.comment.save()
 
